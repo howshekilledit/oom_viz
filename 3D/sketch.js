@@ -62,18 +62,31 @@ var createScene = function () {
 
 
     // }
-    for(var x = 0; x < 9; x+=step){
-        for(var y = 0; y < 9; y+=step){
-            for(var z = 0; z <9; z+=step){
-                placeBox(x, y, z, step);
-                //console.log([x,y,z]);
-                if((x ==6)&&(y == 6)&&(z == 6)){
-                    console.log([x,y,z]);
-                    step = 1;
-                    c_index +=1;
 
-                }
+    //build inner shape
+
+    var x = 9;
+    step = 1;
+    for(var y = 0; y < 10; y+=step){
+        for(var z = 0; z <10; z+=step){
+            if((y<9)||(z<9)){
+            placeBox(x, y, z, step);
             }
+        }
+    }
+    var z = 9;
+    for(var y = 0; y < 10; y+=step){
+        for(var x = 0; x < 9; x+=step){
+
+            placeBox(x, y, z, step);
+
+            //console.log([x,y,z]);
+        }
+    }
+    var y = 9;
+    for(var z = 0; z < 9; z+=step){
+        for(var x = 0; x < 9; x+=step){
+            placeBox(x, y, z, step);
         }
     }
 
