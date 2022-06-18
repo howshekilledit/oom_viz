@@ -39,35 +39,66 @@ var createScene = function () {
     //     mat.diffuseColor = new BABYLON.Color3(i/100, 0, (100-i)/100);
     //     box.material = mat;
     // }
-    var coords = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-    coords = [0, 3, 6, 9];
+
+    //marginal coordiantes
+    var marg_coords = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+    //coords for iterating
+
     var step = 3;
+
+    //coordiantes to use for current iteration
+    var it_coords = marg_coords.filter(c => c%step == 0);
+    var coord_names = ['x', 'y', 'z'];
+    var c_index = 0;
     var count = 1000000000;
     var thresh = count/10;
-    for (var x = 0; x < 10; x+=step) {
-        //for(var y = 0; y < 10; z++){
-        for (var z = 0; z < 10; z+=step) {
-            //placeBox(x, 2, z, step);
-            coords.map(y => placeBox(x, y, z, step));
+    var pos = {x: 0, y: 0, z: 0};
+    var boxes = 0;
+    var iter_c = 0;
+    while(boxes < 5000){
+        placeBox(pos.x, pos.y, pos.z, step);
 
-        }
-        // }
+
     }
+
     function placeBox(x, y, z, size) {
         //if (Math.random() < 0.5) {
 
-            var box = BABYLON.MeshBuilder.CreateBox("box", { width: size, height: size, depth:size }, scene);
+            var box = BABYLON.MeshBuilder.CreateBox("box", { width: size, height: size, depth:size}, scene);
+            console.log(pos, count);
             box.position = new BABYLON.Vector3(x, y, z);
             var mat = new BABYLON.StandardMaterial();
-            col = Math.random();
-            mat.diffuseColor = new BABYLON.Color3(col, 0, 1 - col);
+            mat.diffuseColor = BABYLON.Color3.FromHexString(colors[c_index]);
             box.material = mat;
-            count -= Math.pow(300, step);
+            count -= Math.pow(step*100, step);
+            //console.log(count);
+
+            //step down order of magnitude when appropriate
             if(count <= thresh){
                 step--;
                 thresh = thresh/10;
+                it_coords = marg_coords.filter(c => c%step == 0);
+                //console.log(it_coords, thresh);
+                c_index++;
             }
+            var iter_c = Math.floor(Math.random()*3);
+            pos[coord_names[iter_c]] = iter_pos(pos[coord_names[iter_c]], marg_coords.length, step);
+            //if(pos[coord_names[iter_c]] == 0){
+            //iter_c = iter_pos(iter_c, coord_names.length);
+            //}
+            boxes++;
+
+
+
         //}
+    }
+    function iter_pos(num, max, step = 1){
+        num+=step;
+        if(num>=max){
+            num = 0;
+        }
+        return num;
     }
 
     //var box = BABYLON.MeshBuilder.CreateBox("box", {width:10, height:10, depth:10}, scene);
