@@ -25,3 +25,23 @@ colors = ['#FF6633', '#FFB399', '#FF33FF', '#FFFF99', '#00B3E6',
 //     '#000', '#ffffff',  '#000', '#ffffff',  '#000', '#ffffff',  '#000', '#ffffff',  '#000', '#ffffff',
 //     '#000', '#ffffff',  '#000', '#ffffff',  '#000', '#ffffff',  '#000', '#ffffff',  '#000', '#ffffff'
 // ];
+
+//mehretu https://news.artnet.com/art-world/julie-mehretu-lacma-review-1699149
+colors = [
+    '#282B80', //indigo
+    '#F58A44', //creamsicle
+    '#086746', //dayglo
+    '#0F90AB', //blue
+
+    '#233FA1', //tarp blue
+
+    '#E0659F', //pink
+    '#58CFCC', //light blue
+    //'#F3E004', //yellow
+    '#9F9D92', //gray
+    '#113746', //gray green
+    '#CB2A38' //tomato
+
+
+
+]

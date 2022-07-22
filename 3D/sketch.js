@@ -1,5 +1,5 @@
 var canvas = document.getElementById("renderCanvas");
-
+let scale = 10;
 var startRenderLoop = function (engine, canvas) {
     engine.runRenderLoop(function () {
         if (sceneToRender && sceneToRender.activeCamera) {
@@ -17,7 +17,7 @@ var createScene = function () {
     var scene = new BABYLON.Scene(engine);
 
     // This creates and positions a free camera (non-mesh)
-    var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(20, 20, 30), scene);
+    var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(160*scale, 140*scale, 160*scale), scene);
 
     // This targets the camera to scene origin
     camera.setTarget(BABYLON.Vector3.Zero());
@@ -27,9 +27,9 @@ var createScene = function () {
 
     // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
     var light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(1, 2, 0), scene);
-
+    //light.diffuse = new BABYLON.Color3.FromHexString(colors[0]);
     // Default intensity is 1. Let's dim the light a small amount
-    light.intensity = 0.7;
+    light.intensity = 1;
 
     //white background
     scene.clearColor = BABYLON.Color3.White();
@@ -59,8 +59,8 @@ var createScene = function () {
     var pos = { x: 0, y: 0, z: 0 };
     var boxes = 0;
     var iter_c = 0;
-    var c_index = 5; //color index
-    cornerCutBox();
+    var c_index = 0; //color index
+    cornerCutBox(0, 10);
 
     //draw axes
     //const axes = new BABYLON.AxesViewer(scene, 10);
@@ -68,35 +68,35 @@ var createScene = function () {
     c_index++;
     // //placeBox(9, 9, 9,1);
     // //c_index+=3;
-    cornerCutBox(9, 0.1);
+    cornerCutBox(90*scale, 1*scale, ['million', '100,000', '10,000']);
     c_index++;
-    cornerCutBox(9.9, 0.01);
+    cornerCutBox(99*scale, 0.1*scale, ['1000', '100', '10']);
     c_index++;
 
     //one box
-    placeBox(10, 10, 10, 0.01)
-    function cornerCutBox(offset = 0, scale = 1, wf = false) {
+    placeBox(99.9*scale, 99.9*scale, 99.9*scale, .1*scale)
+    function cornerCutBox(offset = 0, scale = 1, labels = ['billion', '100 million', '10 million'], wf = false) {
         //by chunk version
 
         //billion
         var pos = new BABYLON.Vector3(offset, offset, offset);
         var dim = new BABYLON.Vector3(10 * scale, 10 * scale, 9 * scale);
-        placePrism(dim, pos, colors[c_index], "billion", 4);
-
+        var nine = placePrism(dim, pos, colors[c_index], labels[0], [5,2]);
+        nine.rotation.z += Math.PI/2;
         //hundred million
         c_index++;
         pos = new BABYLON.Vector3(offset, offset, 9 * scale + offset);
         dim = new BABYLON.Vector3(10 * scale, 9 * scale, scale);
-        var eight = placePrism(dim, pos, colors[c_index], "hundred\nmillion", 0);
+        var eight = placePrism(dim, pos, colors[c_index], labels[1], 0);
 
-        //eight.rotation.z += Math.PI;
+        eight.rotation.z += Math.PI;
 
         //ten million
 
         c_index++;
         pos = new BABYLON.Vector3(offset, 9 * scale + offset, 9 * scale + offset);
         dim = new BABYLON.Vector3(9 * scale, scale, scale);
-        var seven = placePrism(dim, pos, colors[c_index], "ten million");
+        var seven = placePrism(dim, pos, colors[c_index], labels[2], 0);
         seven.rotation.z += Math.PI;
 
         // //by cube version
@@ -139,11 +139,11 @@ var createScene = function () {
 
 
     function placePrism(dim, pos, clr, label, text_face = 4) {
-        //text on cube reference
-        const dynamicTexture = new BABYLON.DynamicTexture("text", { width: 500, height: 500 }, scene);
+        //text on cube reference: https://doc.babylonjs.com/divingDeeper/materials/using/texturePerBoxFace
+        const dynamicTexture = new BABYLON.DynamicTexture("text", { width: 100 * dim.x, height: 100 * dim.y }, scene);
         const mat = new BABYLON.StandardMaterial("mat", scene);
         mat.diffuseTexture = dynamicTexture;
-        dynamicTexture.drawText(label, null, null, "100px solid Arial", "blue", "white");
+        dynamicTexture.drawText(label, null, null, `${Math.min(20*dim.x, 70*dim.y)}px Arial`, "white", clr);
         const faceColors = new Array(6);
         for(var i = 0; i < faceColors.length; i++){
             faceColors[i] = new BABYLON.Color4.FromHexString(clr);
@@ -153,10 +153,18 @@ var createScene = function () {
         for (let i = 0; i < 6; i++) {
             faceUV[i] = new BABYLON.Vector4(0, 0, 0, 0);
         }
-        faceUV[text_face] = new BABYLON.Vector4(0, 0, 1, 1);
+
+        //write label on face or faces as specified
+        if(Array.isArray(text_face)){
+            for(const face of text_face){
+                faceUV[face] = new BABYLON.Vector4(0, 0, 1, 1);
+            }
+        } else {
+            faceUV[text_face] = new BABYLON.Vector4(0, 0, 1, 1);
+        }
 
         const boxOption = {
-            faceColors: faceColors,
+            //faceColors: faceColors,
             faceUV: faceUV,
             width: dim.x, height: dim.y, depth: dim.z
         }
@@ -199,8 +207,8 @@ var createScene = function () {
 
     //var box = BABYLON.MeshBuilder.CreateBox("box", {width:10, height:10, depth:10}, scene);
     // Move the box upward 1/2 its height
-    var cam_c = 11;
-    var cam_d = 10.65;
+    var cam_c = 110*scale;
+    var cam_d = 102*scale;
     var campos = new BABYLON.Vector3(cam_c, cam_c, cam_c);
     var campos2 = new BABYLON.Vector3(cam_d, cam_d, cam_d);
     var clicks = 0;
