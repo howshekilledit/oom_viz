@@ -145,7 +145,13 @@ var createScene = function () {
         const dynamicTexture = new BABYLON.DynamicTexture("text", { width: 100 * dim.x, height: 100 * dim.y }, scene);
         const mat = new BABYLON.StandardMaterial("mat", scene);
         mat.diffuseTexture = dynamicTexture;
-        dynamicTexture.drawText(label, null, null, `${Math.min(20*dim.x, 70*dim.y)}px Helvetica Neue`, "white", clr);
+
+        //draw label on texture
+        //using label variable
+        //dynamicTexture.drawText(label, null, null, `${Math.min(20*dim.x, 70*dim.y)}px Helvetica Neue`, "white", clr);
+
+        dynamicTexture.drawText('9', 5, null, `${Math.min(10*dim.x, 35*dim.y)}px Helvetica Neue`, "white");
+        dynamicTexture.drawText('10', null, null, `${Math.min(20*dim.x, 70*dim.y)}px Helvetica Neue`, "white");
         const faceColors = new Array(6);
         for(var i = 0; i < faceColors.length; i++){
             faceColors[i] = new BABYLON.Color4.FromHexString(clr);
@@ -171,18 +177,11 @@ var createScene = function () {
             width: dim.x, height: dim.y, depth: dim.z
         }
 
-        // Our built-in 'sphere' shape.
         const box = BABYLON.MeshBuilder.CreateBox("box", boxOption);
 
         box.material = mat;
-        //var box = BABYLON.MeshBuilder.CreateBox("box", { width: dim.x, height: dim.y, depth: dim.z }, scene);
         box.position = new BABYLON.Vector3(pos.x + dim.x / 2, pos.y + dim.y / 2, pos.z + dim.z / 2);
-        // var mat = new BABYLON.StandardMaterial();
-        // var text_texture = new BABYLON.DynamicTexture(label + "_texture", { width: dim.x *100, height:dim.y*100}, scene);
-        // box.material = mat;
 
-        // text_texture.drawText(label,100, 100, `${Math.round(dim.x*10)}px Century Gothic`, 'black', clr);
-        // mat.diffuseTexture = text_texture;
         return box;
 
     }
