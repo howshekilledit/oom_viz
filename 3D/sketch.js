@@ -1,5 +1,5 @@
 var canvas = document.getElementById("renderCanvas");
-let scale = 10;
+let scale = 1;
 var startRenderLoop = function (engine, canvas) {
     engine.runRenderLoop(function () {
         if (sceneToRender && sceneToRender.activeCamera) {
@@ -17,7 +17,7 @@ var createScene = function () {
     var scene = new BABYLON.Scene(engine);
 
     // This creates and positions a free camera (non-mesh)
-    var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(160*scale, 140*scale, 160*scale), scene);
+    var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(160*scale, 165*scale, 205*scale), scene);
 
     // This targets the camera to scene origin
     camera.setTarget(BABYLON.Vector3.Zero());
@@ -26,7 +26,9 @@ var createScene = function () {
     camera.attachControl(canvas, true);
 
     // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
-    var light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(1, 2, 0), scene);
+   var light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0.5, 1, 0), scene);
+   //var light2 = new BABYLON.HemisphericLight("light2", new BABYLON.Vector3(1000, 1000, 1000), scene);
+   //var light3 = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(165*scale, 145*scale, 165*scale), scene);
     //light.diffuse = new BABYLON.Color3.FromHexString(colors[0]);
     // Default intensity is 1. Let's dim the light a small amount
     light.intensity = 1;
@@ -60,7 +62,7 @@ var createScene = function () {
     var boxes = 0;
     var iter_c = 0;
     var c_index = 0; //color index
-    cornerCutBox(0, 10);
+    cornerCutBox(0, 10*scale);
 
     //draw axes
     //const axes = new BABYLON.AxesViewer(scene, 10);
@@ -143,7 +145,7 @@ var createScene = function () {
         const dynamicTexture = new BABYLON.DynamicTexture("text", { width: 100 * dim.x, height: 100 * dim.y }, scene);
         const mat = new BABYLON.StandardMaterial("mat", scene);
         mat.diffuseTexture = dynamicTexture;
-        dynamicTexture.drawText(label, null, null, `${Math.min(20*dim.x, 70*dim.y)}px Arial`, "white", clr);
+        dynamicTexture.drawText(label, null, null, `${Math.min(20*dim.x, 70*dim.y)}px Helvetica Neue`, "white", clr);
         const faceColors = new Array(6);
         for(var i = 0; i < faceColors.length; i++){
             faceColors[i] = new BABYLON.Color4.FromHexString(clr);
@@ -216,7 +218,7 @@ var createScene = function () {
     var anim_0 = [{ obj: camera, prop: 'position', val: campos, dims: ['x', 'y', 'z'] }];
     var anim_1 = [{ obj: camera, prop: 'position', val: campos2, dims: ['x', 'y', 'z'] }];
     //animate(anims, scene);
-    canvas.addEventListener("click", function () {
+    document.getElementById('in').addEventListener("click", function () {
         if (clicks == 0) {
             animate(anim_0, scene);
             clicks++;

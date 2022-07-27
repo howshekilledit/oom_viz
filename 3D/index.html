@@ -18,7 +18,7 @@
         <script src="./scripts/babylonjs.proceduralTextures.min.js"></script>
         <script src="./scripts/babylonjs.postProcess.min.js"></script>
         <!--script src="./scripts/babylonjs.loaders.js"></script-->
-        <script src="https://preview.babylonjs.com/loaders/babylonjs.loaders.js"></script>
+        <!--script src="https://preview.babylonjs.com/loaders/babylonjs.loaders.js"></script-->
         <script src="./scripts/babylonjs.serializers.min.js"></script>
         <script src="./scripts/babylon.gui.min.js"></script>
         <script src="./scripts/babylon.inspector.bundle.js"></script>
@@ -41,9 +41,18 @@
                 height: 100%;
                 touch-action: none;
             }
+
+            #controls{position:absolute;top:0;background:white; text-align:center; width:100%;
+            }
+            #controls a{padding:10px; text-align:center}
         </style>
     </head>
 <body>
+    <div id = "controls">
+        <a id = "in">Zoom In </a>
+        <a id = "out">Zoom Out</a>
+        <a id = "exp">Toggle Exponents</a>
+    </div>
     <canvas id="renderCanvas"></canvas>
     <script src = "sketch.js"> </script>
 </body>
