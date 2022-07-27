@@ -101,41 +101,7 @@ var createScene = function () {
         var seven = placePrism(dim, pos, colors[c_index], labels[2], 0);
         seven.rotation.z += Math.PI;
 
-        // //by cube version
-        // var x = 9;
-        // step = 1;
-        // //left facet
-        // for (var y = 0; y < 10; y += step) {
-        //     if (y > 8) {
-        //         c_index += 1;
-        //     }
-        //     for (var z = 0; z < 10; z += step) {
-        //         if ((y < 9) || (z < 9)) {
-        //             placeBox(x*scale + offset, y*scale + offset, z*scale +offset, step*scale, wf);
-        //         }
-        //     }
-        // }
-        // //right facet
-        // c_index += 1;
-        // var z = 9;
-        // for (var y = 0; y < 10; y += step) {
 
-        //     for (var x = 0; x < 9; x += step) {
-
-        //         placeBox(x*scale + offset, y*scale + offset, z*scale +offset, step*scale, wf);
-
-        //         //console.log([x,y,z]);
-        //     }
-        // }
-
-        // //top facet
-        // //c_index -= 1;
-        // var y = 9;
-        // for (var z = 0; z < 9; z += step) {
-        //     for (var x = 0; x < 9; x += step) {
-        //         placeBox(x*scale + offset, y*scale + offset, z*scale +offset, step*scale, wf);
-        //     }
-        // }
     }
 
 
@@ -150,7 +116,7 @@ var createScene = function () {
         //using label variable
         //dynamicTexture.drawText(label, null, null, `${Math.min(20*dim.x, 70*dim.y)}px Helvetica Neue`, "white", clr);
 
-        dynamicTexture.drawText('9', 5, null, `${Math.min(10*dim.x, 35*dim.y)}px Helvetica Neue`, "white");
+        dynamicTexture.drawText('9', 100*dim.x/2 + Math.min(10*dim.x, 35*dim.y), 100*dim.y/2 - Math.min(6*dim.x, 20*dim.y), `${Math.min(10*dim.x, 35*dim.y)}px Helvetica Neue`, "white", clr);
         dynamicTexture.drawText('10', null, null, `${Math.min(20*dim.x, 70*dim.y)}px Helvetica Neue`, "white");
         const faceColors = new Array(6);
         for(var i = 0; i < faceColors.length; i++){
