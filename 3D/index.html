@@ -42,16 +42,22 @@
                 touch-action: none;
             }
 
-            #controls{position:absolute;top:0;background:white; text-align:center; width:100%;
+            #controls{position:absolute;top:0;background:white; text-align:center; width:100%;font-size: 4vh; font-family: 'Rubik', sans-serif;
+;
             }
-            #controls a{padding:10px; text-align:center}
+            #controls a{padding:10px; text-align:center;  text-decoration:none}
+            #out{color:gray; cursor:auto;}
+
         </style>
     </head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@500&display=swap" rel="stylesheet">
 <body>
     <div id = "controls">
-        <a id = "in">Zoom In </a>
-        <a id = "out">Zoom Out</a>
-        <a id = "exp">Toggle Exponents</a>
+        <a id = "in" href = "javascript:void(0)">+</i></a>
+        <a id = "out" href = "javascript:void(0)">-</a>
+        <a id = "exp" href = "javascript:void(0)">10<sup>x</sup></a>
     </div>
     <canvas id="renderCanvas"></canvas>
     <script src = "sketch.js"> </script>

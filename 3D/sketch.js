@@ -1,5 +1,5 @@
 var canvas = document.getElementById("renderCanvas");
-let scale = 1;
+let scale = 2;
 var startRenderLoop = function (engine, canvas) {
     engine.runRenderLoop(function () {
         if (sceneToRender && sceneToRender.activeCamera) {
@@ -17,7 +17,7 @@ var createScene = function () {
     var scene = new BABYLON.Scene(engine);
 
     // This creates and positions a free camera (non-mesh)
-    var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(160*scale, 165*scale, 205*scale), scene);
+    var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(160 * scale, 165 * scale, 205 * scale), scene);
 
     // This targets the camera to scene origin
     camera.setTarget(BABYLON.Vector3.Zero());
@@ -26,12 +26,14 @@ var createScene = function () {
     camera.attachControl(canvas, true);
 
     // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
-   var light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0.5, 1, 0), scene);
-   //var light2 = new BABYLON.HemisphericLight("light2", new BABYLON.Vector3(1000, 1000, 1000), scene);
-   //var light3 = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(165*scale, 145*scale, 165*scale), scene);
+    var light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(165 * scale, 170 * scale, 210 * scale), scene);
+    var light2 = new BABYLON.HemisphericLight("light2", new BABYLON.Vector3(0,1,0), scene);
+    var light3 = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(165 * scale, 170 * scale, 210 * scale), scene);
     //light.diffuse = new BABYLON.Color3.FromHexString(colors[0]);
     // Default intensity is 1. Let's dim the light a small amount
-    light.intensity = 1;
+    light.intensity = 0;
+    light2.intensity = 0;
+    light3.intensity = 1;
 
     //white background
     scene.clearColor = BABYLON.Color3.White();
@@ -53,38 +55,43 @@ var createScene = function () {
     var step = 3;
 
     //coordiantes to use for current iteration
-    var it_coords = marg_coords.filter(c => c % step == 0);
-    var coord_names = ['x', 'y', 'z'];
 
-    var count = 1000000000;
-    var thresh = count / 10;
     var pos = { x: 0, y: 0, z: 0 };
-    var boxes = 0;
-    var iter_c = 0;
+
     var c_index = 0; //color index
-    cornerCutBox(0, 10*scale);
+    var prisms;
+    var exp_on = false;
+    //(function () {
 
-    //draw axes
-    //const axes = new BABYLON.AxesViewer(scene, 10);
+        //draw each prism and append to an array of prisms
+        prisms = cornerCutBox(0, 10 * scale);
+        c_index++;
+        prisms = prisms.concat(cornerCutBox(90 * scale, 1 * scale, ['million', '100,000', '10,000']));
+        c_index++;
+        prisms = prisms.concat(cornerCutBox(99 * scale, 0.1 * scale, ['1000', '100', '10']));
+        c_index++;
+        console.log(prisms);
+        //one box
+        //prisms.push(placeBox(99.9 * scale, 99.9 * scale, 99.9 * scale, .1 * scale));
 
-    c_index++;
-    // //placeBox(9, 9, 9,1);
-    // //c_index+=3;
-    cornerCutBox(90*scale, 1*scale, ['million', '100,000', '10,000']);
-    c_index++;
-    cornerCutBox(99*scale, 0.1*scale, ['1000', '100', '10']);
-    c_index++;
+        //array of materials with number names printed on them
+    scene.executeWhenReady(function () {
+        text_labels();
+    });
+    //})();
+    var mat_labels = ['billion', '100 million', '10 million', 'million', '100,000', '10,000', '1,000', '100', '10', '1']
 
-    //one box
-    placeBox(99.9*scale, 99.9*scale, 99.9*scale, .1*scale)
+
+
+
     function cornerCutBox(offset = 0, scale = 1, labels = ['billion', '100 million', '10 million'], wf = false) {
         //by chunk version
 
         //billion
         var pos = new BABYLON.Vector3(offset, offset, offset);
         var dim = new BABYLON.Vector3(10 * scale, 10 * scale, 9 * scale);
-        var nine = placePrism(dim, pos, colors[c_index], labels[0], [5,2]);
-        nine.rotation.z += Math.PI/2;
+        var nine = placePrism(dim, pos, colors[c_index], labels[0], [5, 2]);
+        nine.rotation.z += Math.PI / 2;
         //hundred million
         c_index++;
         pos = new BABYLON.Vector3(offset, offset, 9 * scale + offset);
@@ -100,6 +107,7 @@ var createScene = function () {
         dim = new BABYLON.Vector3(9 * scale, scale, scale);
         var seven = placePrism(dim, pos, colors[c_index], labels[2], 0);
         seven.rotation.z += Math.PI;
+        return [nine, eight, seven];
 
 
     }
@@ -110,16 +118,16 @@ var createScene = function () {
         //text on cube reference: https://doc.babylonjs.com/divingDeeper/materials/using/texturePerBoxFace
         const dynamicTexture = new BABYLON.DynamicTexture("text", { width: 100 * dim.x, height: 100 * dim.y }, scene);
         const mat = new BABYLON.StandardMaterial("mat", scene);
-        mat.diffuseTexture = dynamicTexture;
+        //mat.diffuseTexture = dynamicTexture;
 
         //draw label on texture
         //using label variable
-        //dynamicTexture.drawText(label, null, null, `${Math.min(20*dim.x, 70*dim.y)}px Helvetica Neue`, "white", clr);
+        //dynamicTexture.drawText(label, null, null, `${Math.min(20 * dim.x, 70 * dim.y)}px Rubik`, "white", clr);
 
-        dynamicTexture.drawText('9', 100*dim.x/2 + Math.min(10*dim.x, 35*dim.y), 100*dim.y/2 - Math.min(6*dim.x, 20*dim.y), `${Math.min(10*dim.x, 35*dim.y)}px Helvetica Neue`, "white", clr);
-        dynamicTexture.drawText('10', null, null, `${Math.min(20*dim.x, 70*dim.y)}px Helvetica Neue`, "white");
+        //dynamicTexture.drawText('9', 100*dim.x/2 + Math.min(10*dim.x, 35*dim.y), 100*dim.y/2 - Math.min(6*dim.x, 20*dim.y), `${Math.min(10*dim.x, 35*dim.y)}px Roboto`, "white", clr);
+        //dynamicTexture.drawText('10', null, null, `${Math.min(20*dim.x, 70*dim.y)}px Major Mono Display`, "white");
         const faceColors = new Array(6);
-        for(var i = 0; i < faceColors.length; i++){
+        for (var i = 0; i < faceColors.length; i++) {
             faceColors[i] = new BABYLON.Color4.FromHexString(clr);
         }
         const faceUV = new Array(6);
@@ -129,8 +137,8 @@ var createScene = function () {
         }
 
         //write label on face or faces as specified
-        if(Array.isArray(text_face)){
-            for(const face of text_face){
+        if (Array.isArray(text_face)) {
+            for (const face of text_face) {
                 faceUV[face] = new BABYLON.Vector4(0, 0, 1, 1);
             }
         } else {
@@ -162,7 +170,7 @@ var createScene = function () {
         mat.diffuseColor = BABYLON.Color3.FromHexString(colors[c_index]);
         console.log(colors[c_index]);
         if (wf) { mat.wireframe = true; } //show wireframe if wf parameter set to true
-        boxes++;
+
     }
     function iter_pos(num, max, step = 1) {
         num += step;
@@ -173,25 +181,108 @@ var createScene = function () {
     }
 
     //var box = BABYLON.MeshBuilder.CreateBox("box", {width:10, height:10, depth:10}, scene);
-    // Move the box upward 1/2 its height
-    var cam_c = 110*scale;
-    var cam_d = 102*scale;
+
+    var cam_c = 110 * scale;
+    var cam_d = 102 * scale;
     var campos = new BABYLON.Vector3(cam_c, cam_c, cam_c);
     var campos2 = new BABYLON.Vector3(cam_d, cam_d, cam_d);
-    var clicks = 0;
-    // Our built-in 'ground' shape.
+    var campos_og = new BABYLON.Vector3(160 * scale, 165 * scale, 205 * scale);
+    var pos = 0;
+    // animations that move camera in/out
     var anim_0 = [{ obj: camera, prop: 'position', val: campos, dims: ['x', 'y', 'z'] }];
     var anim_1 = [{ obj: camera, prop: 'position', val: campos2, dims: ['x', 'y', 'z'] }];
+    var anim_og = [{ obj: camera, prop: 'position', val: campos_og, dims: ['x', 'y', 'z'] }];
     //animate(anims, scene);
-    document.getElementById('in').addEventListener("click", function () {
-        if (clicks == 0) {
-            animate(anim_0, scene);
-            clicks++;
-        } else {
-            animate(anim_1, scene);
+    //zoom in button
+    var inn = document.getElementById('in');
+    //zoom out button
+    var outt = document.getElementById('out');
+    var exp = document.getElementById('exp');
+    inn.addEventListener("click", function () {
+        switch (pos) {
+            case 0:
+                animate(anim_0, scene);
+                pos++;
+                break;
+            case 1:
+                animate(anim_1, scene);
+                pos++;
+                inn.style.color = 'gray';
+                break;
+            default:
+                break;
         }
         //camera.position = campos;
     });
+
+    outt.addEventListener("click", function () {
+        switch (pos) {
+            case 1:
+                animate(anim_og, scene);
+                pos--;
+                break;
+            case 2:
+                animate(anim_0, scene);
+                pos--;
+                //inn.style.color = 'gray';
+                break;
+            default:
+                break;
+        }
+        //camera.position = campos;
+    });
+
+    //toggle to exponents when clicked
+    exp.addEventListener("click", function () {
+        if(exp_on){
+            text_labels();
+            //this.innerHTML = '10<sup>x</sup>';
+            exp_on = false;
+        } else {
+            c_index = 0;
+            for (var i = 0; i < prisms.length; i++) {
+                var exp = 9 - i;
+                var clr = colors[c_index];
+                var p = prisms[i];
+                var dim = p.getBoundingInfo().boundingBox.extendSize;
+                //var dim = {x:10, y:10};
+                var dynamicTexture = new BABYLON.DynamicTexture("text", { width: 100 * dim.x, height: 100 * dim.y }, scene);
+                p.material.diffuseTexture = dynamicTexture;
+                dynamicTexture.drawText(exp, 120 * dim.x / 2 + 30 * dim.y, 100 * dim.y / 2 - 15 * dim.y, `${Math.min(10 * dim.x, 35 * dim.y)}px Rubik`, "white", clr);
+                dynamicTexture.drawText('10', null, null, `${60 * dim.y}px Rubik`, "white");
+                c_index++;
+            }
+            //this.innerHTML = '1...';
+            exp_on = true;
+
+        }
+
+    });
+    function text_labels(){
+        c_index = 0;
+
+            for (var i = 0; i < prisms.length; i++) {
+                lbl = mat_labels[i];
+                var clr = colors[c_index];
+                var p = prisms[i];
+                var dim = p.getBoundingInfo().boundingBox.extendSize;
+                //var dim = {x:10, y:10};
+                //var dynamicTexture = new BABYLON.DynamicTexture("text", { width: 100 * dim.x, height: 100 * dim.y }, scene);
+                var height_fact;
+                if(dim.x = dim.y*9){
+                    height_fact = 1/9;
+                } else {
+                    height_fact = 1;
+                }
+                var dynamicTexture = new BABYLON.DynamicTexture("text", { width: 3000, height: 3000*height_fact}, scene);
+                p.material.diffuseTexture = dynamicTexture;
+                //p.material.diffuseColor = new BABYLON.Color3(1, 0, 1);
+                dynamicTexture.drawText(lbl, null, null, `750px Rubik`, "white", clr);
+                //dynamicTexture.drawText(lbl, null, null, `${Math.min(20 * dim.x, 70 * dim.y)}px Rubik`, "white", clr);
+                c_index++;
+            }
+            exp_on = false;
+    }
     return scene;
 };
 
