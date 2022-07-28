@@ -1,0 +1,28 @@
+@mixin element-color($color) {
+    background-image: url('data:image/svg+xml;utf8,<svg ...><g stroke="#{$color}" ... /></g></svg>');
+  }
+
+html, body {
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+#renderCanvas {
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+}
+
+#controls{position:absolute;top:0;background:white; text-align:center; width:100%;font-size: 4vh; font-family: 'Rubik', sans-serif;
+;
+}
+#controls
+{a{padding:10px; text-align:center;  text-decoration:none}
+    img {width:1em;
+        @include element-color(#fff);
+    }
+}
+#out{color:gray; cursor:auto;}

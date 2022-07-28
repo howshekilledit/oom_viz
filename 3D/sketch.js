@@ -1,5 +1,5 @@
 var canvas = document.getElementById("renderCanvas");
-let scale = 2;
+let scale = 1;
 var startRenderLoop = function (engine, canvas) {
     engine.runRenderLoop(function () {
         if (sceneToRender && sceneToRender.activeCamera) {
@@ -72,14 +72,15 @@ var createScene = function () {
         c_index++;
         console.log(prisms);
         //one box
-        //prisms.push(placeBox(99.9 * scale, 99.9 * scale, 99.9 * scale, .1 * scale));
+        prisms.push(placeBox(99.9 * scale, 99.9 * scale, 99.9 * scale, .1 * scale));
+        var mat_labels = ['billion', '100 million', '10 million', 'million', '100,000', '10,000', '1,000', '100', '10', '1']
 
+        //text_labels('blank');
         //array of materials with number names printed on them
     scene.executeWhenReady(function () {
         text_labels();
     });
     //})();
-    var mat_labels = ['billion', '100 million', '10 million', 'million', '100,000', '10,000', '1,000', '100', '10', '1']
 
 
 
@@ -128,7 +129,7 @@ var createScene = function () {
         //dynamicTexture.drawText('10', null, null, `${Math.min(20*dim.x, 70*dim.y)}px Major Mono Display`, "white");
         const faceColors = new Array(6);
         for (var i = 0; i < faceColors.length; i++) {
-            faceColors[i] = new BABYLON.Color4.FromHexString(clr);
+            faceColors[i] = new BABYLON.Color3.FromHexString(clr);
         }
         const faceUV = new Array(6);
 
@@ -147,7 +148,7 @@ var createScene = function () {
 
         const boxOption = {
             //faceColors: faceColors,
-            faceUV: faceUV,
+            //faceUV: faceUV,
             width: dim.x, height: dim.y, depth: dim.z
         }
 
@@ -170,7 +171,7 @@ var createScene = function () {
         mat.diffuseColor = BABYLON.Color3.FromHexString(colors[c_index]);
         console.log(colors[c_index]);
         if (wf) { mat.wireframe = true; } //show wireframe if wf parameter set to true
-
+        return box;
     }
     function iter_pos(num, max, step = 1) {
         num += step;
@@ -239,26 +240,13 @@ var createScene = function () {
             //this.innerHTML = '10<sup>x</sup>';
             exp_on = false;
         } else {
-            c_index = 0;
-            for (var i = 0; i < prisms.length; i++) {
-                var exp = 9 - i;
-                var clr = colors[c_index];
-                var p = prisms[i];
-                var dim = p.getBoundingInfo().boundingBox.extendSize;
-                //var dim = {x:10, y:10};
-                var dynamicTexture = new BABYLON.DynamicTexture("text", { width: 100 * dim.x, height: 100 * dim.y }, scene);
-                p.material.diffuseTexture = dynamicTexture;
-                dynamicTexture.drawText(exp, 120 * dim.x / 2 + 30 * dim.y, 100 * dim.y / 2 - 15 * dim.y, `${Math.min(10 * dim.x, 35 * dim.y)}px Rubik`, "white", clr);
-                dynamicTexture.drawText('10', null, null, `${60 * dim.y}px Rubik`, "white");
-                c_index++;
-            }
-            //this.innerHTML = '1...';
+            text_labels('exp');
             exp_on = true;
 
         }
 
     });
-    function text_labels(){
+    function text_labels(format = "std"){
         c_index = 0;
 
             for (var i = 0; i < prisms.length; i++) {
@@ -269,19 +257,36 @@ var createScene = function () {
                 //var dim = {x:10, y:10};
                 //var dynamicTexture = new BABYLON.DynamicTexture("text", { width: 100 * dim.x, height: 100 * dim.y }, scene);
                 var height_fact;
+                console.log(3000*dim.y/dim.x, dim.y/dim.x);
                 if(dim.x = dim.y*9){
                     height_fact = 1/9;
                 } else {
                     height_fact = 1;
                 }
-                var dynamicTexture = new BABYLON.DynamicTexture("text", { width: 3000, height: 3000*height_fact}, scene);
+                var dynamicTexture = new BABYLON.DynamicTexture("text", { width: 3000, height: 3000*dim.y/dim.x}, scene);
                 p.material.diffuseTexture = dynamicTexture;
+                //format as standard or exponents
+                switch (format) {
+                    case ('std'):
+                        dynamicTexture.drawText(lbl, null, null, `750px Rubik`, "white", clr);
+                        break;
+                    case ('exp'):
+                        dynamicTexture.drawText(exp, 120 * dim.x / 2 + 30 * dim.y, 100 * dim.y / 2 - 15 * dim.y, `${Math.min(10 * dim.x, 35 * dim.y)}px Rubik`, "white", clr);
+                        dynamicTexture.drawText('10', null, null, `${60 * dim.y}px Rubik`, "white");
+                        break;
+                    case ('blank'):
+                        dynamicTexture.drawText('', null, null, `${60 * dim.y}px Rubik`, "white");
+                        break;
+                    default:
+                        break;
+
+                }
+                //dynamicTexture.drawText('', null, null, `750px Rubik`, "white", clr);
                 //p.material.diffuseColor = new BABYLON.Color3(1, 0, 1);
-                dynamicTexture.drawText(lbl, null, null, `750px Rubik`, "white", clr);
                 //dynamicTexture.drawText(lbl, null, null, `${Math.min(20 * dim.x, 70 * dim.y)}px Rubik`, "white", clr);
                 c_index++;
             }
-            exp_on = false;
+
     }
     return scene;
 };
