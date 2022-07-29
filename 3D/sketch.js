@@ -1,3 +1,4 @@
+
 var canvas = document.getElementById("renderCanvas");
 let scale = 1;
 var startRenderLoop = function (engine, canvas) {
@@ -60,7 +61,7 @@ var createScene = function () {
 
     var c_index = 0; //color index
     var prisms;
-    var exp_on = false;
+    var exp_on;
     //(function () {
 
     //draw each prism and append to an array of prisms
@@ -75,15 +76,20 @@ var createScene = function () {
     var box_pos = new BABYLON.Vector3(99.9 * scale, 99.9 * scale, 99.9 * scale);
     var box_dim = new BABYLON.Vector3(0.1 * scale, 0.1 * scale, 0.1 * scale);
     one_box = placePrism(box_dim, box_pos, colors[c_index],[0, 1, 2, 3, 4, 5]);
-    one_box.rotation.x += Math.PI/2;
+    //one_box.rotation.x += Math.PI/2;
     prisms.push(one_box)
     console.log(prisms.length);
+    //labels to print on text materials
     var mat_labels = ['billion', '100 million', '10 million', 'million', '100,000', '10,000', '1,000', '100', '10', '1']
 
-    //text_labels('blank');
-    //array of materials with number names printed on them
+
     scene.executeWhenReady(function () {
-        text_labels('exp');
+        //create materials for exponent and text format labels
+       txt_lbls = text_labels();
+       exp_lbls = text_labels('exp');
+       //apply non-exponent labels for now, prep to toggle
+       prisms.map((p, i) => p.material = txt_lbls[i]);
+       exp_on = false;
     });
     //})();
 
@@ -163,23 +169,7 @@ var createScene = function () {
 
     }
 
-    function placeBox(x, y, z, size, wf = false) {
 
-        var box = BABYLON.MeshBuilder.CreateBox("box", { width: size, height: size, depth: size }, scene);
-        box.position = new BABYLON.Vector3(x + size / 2, y + size / 2, z + size / 2);
-        var mat = new BABYLON.StandardMaterial();
-
-
-        if (wf) { mat.wireframe = true; } //show wireframe if wf parameter set to true
-        return box;
-    }
-    function iter_pos(num, max, step = 1) {
-        num += step;
-        if (num >= max) {
-            num = 0;
-        }
-        return num;
-    }
 
     //var box = BABYLON.MeshBuilder.CreateBox("box", {width:10, height:10, depth:10}, scene);
 
@@ -242,53 +232,57 @@ var createScene = function () {
     //toggle to exponents when clicked
     exp.addEventListener("click", function () {
         if (exp_on) {
-            text_labels();
-            //this.innerHTML = '10<sup>x</sup>';
+            prisms.map((p, i) => p.material = txt_lbls[i]);
             exp_on = false;
+
         } else {
-            text_labels('exp');
+            prisms.map((p, i) => p.material = exp_lbls[i]);
             exp_on = true;
+
 
         }
 
     });
+
+    //function returns an array of materials to apply to blocks, with different number formats
     function text_labels(format = "std") {
         c_index = 0;
-        console.log(mat_labels.length, prisms.length)
-        for (var i = 0; i < prisms.length; i++) {
+        function labeled_materials(p, i){
             lbl = mat_labels[i];
             var clr = colors[c_index];
             var p = prisms[i];
             console.log(lbl, p);
-            var dim = p.getBoundingInfo().boundingBox.extendSize;
-            //var dim = {x:10, y:10};
-            //var dynamicTexture = new BABYLON.DynamicTexture("text", { width: 100 * dim.x, height: 100 * dim.y }, scene);
-            var height_fact;
-            var w = 3000; //material width
+            var dim = p.getBoundingInfo().boundingBox.extendSize; //get size of current block
+            var w = 5000; //material width
             var h = w * dim.y / dim.x; //material height
 
-            var font_size = 500;
-            if (lbl == '1') {
-                font_size = 3000;
-            }
-            if (dim.x = dim.y * 9) {
-                height_fact = 1 / 9;
-            } else {
-                height_fact = 1;
-            }
+
+
             var dynamicTexture = new BABYLON.DynamicTexture("text", { width: w, height: h }, scene);
-            p.material.diffuseTexture = dynamicTexture;
+            var material = new BABYLON.StandardMaterial();
+            material.diffuseTexture = dynamicTexture;
+            var font_size;
             //format as standard or exponents
             switch (format) {
                 case ('std'):
+                    if (lbl == '1') {
+                        font_size = 3000;
+                    } else {
+                        if(h < 1000){
+                            font_size = 350;
+                        } else {
+                            font_size = 550;
+                        }
+
+                    }
                     dynamicTexture.drawText(lbl, null, null, `${font_size}px Rubik`, "white", clr);
+                    exp_on = false;
                     break;
                 case ('exp'):
-                    font_size = Math.round(h*1.6);
-                    console.log(font_size, lbl);
-                    //font_size = 300;
-                    //dynamicTexture.drawText(9-i, w/2+font_size/2, h/2-font_size/3, `${font_size/3}px Rubik`, "white", clr);
+                    font_size = Math.round(h*0.6);
+                    dynamicTexture.drawText(9-i, w/2+font_size/2, h/2-font_size/3, `${font_size/3}px Rubik`, "white", clr);
                     dynamicTexture.drawText('10', null, null, `${font_size}px Rubik`, "white");
+                    exp_on = true;
                     break;
                 case ('blank'):
                     dynamicTexture.drawText('', null, null, `$80px Rubik`, "white", clr);
@@ -297,11 +291,11 @@ var createScene = function () {
                     break;
 
             }
-            //dynamicTexture.drawText('', null, null, `750px Rubik`, "white", clr);
-            //p.material.diffuseColor = new BABYLON.Color3(1, 0, 1);
-            //dynamicTexture.drawText(lbl, null, null, `${Math.min(20 * dim.x, 70 * dim.y)}px Rubik`, "white", clr);
+
             c_index++;
+            return material;
         }
+        return prisms.map((p, i) => labeled_materials(p, i));
 
     }
     return scene;
