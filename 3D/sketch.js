@@ -63,6 +63,10 @@ var createScene = function () {
         //apply non-exponent labels for now
         blocks.map((p, i) => p.material = txt_lbls[i]);
         exp_on = false; //boolean to toggle materials
+        //zoom slowly on load
+        setTimeout(function(){
+            animate(anim_1, scene, 6);
+        }, 1000);
     });
     //creates a configuration of three blocks, with a total volume of 10^n - 10^(n-3)
     function cornerCutBox(offset = 0, scale = 1) {
