@@ -41,6 +41,7 @@ include '3D/svg.php'; //link svg reference for control icons
         <!--ZOOM OUT--><a id = "out" href = "javascript:void(0)"><?php echo $magmin?></a>
         <!--TOGGLE EXPONENT LABELS--><a id = "exp" href = "javascript:void(0)"><em>10<sup>x</sup></em></a>
         <!--FLOAT PIECES APART--><a id = "explode">EXPLODE</a>
+        <!--FLOAT PIECES TOGETHER--><a id = "return">CRUNCH</a>
     </div>
 
     <canvas id="renderCanvas"></canvas>

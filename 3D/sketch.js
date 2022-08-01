@@ -54,7 +54,7 @@ var createScene = function () {
 
     //labels to print on text materials
     var mat_labels = ['billion', '100 million', '10 million', 'million', '100,000', '10,000', '1,000', '100', '10', '1']
-
+    var og_pos = blocks.map(b => new BABYLON.Vector3(b.position.x, b.position.y, b.position.z)); //create array of original positions
     //wait until typeface has loaded to create materials
     scene.executeWhenReady(function () {
         //create materials for exponent and text format labels
@@ -148,10 +148,26 @@ var createScene = function () {
     var exp = document.getElementById('exp');
     //explode button
     var explode = document.getElementById('explode');
+    //reverse eplod ebttuin
+    var crnch = document.getElementById('return');
 
+    //explode button slowly pulls blocks apart, crunch returns them together
     explode.addEventListener("click", function () {
         var newExplosion = new BABYLON.MeshExploder(blocks);
-        newExplosion.explode(0.1);
+        newExplosion.explode(0.05);
+    });
+
+    crnch.addEventListener('click', function () {
+        var anims = [];
+        for (let [i, blck] of blocks.entries()) {
+            anims.push(
+                {
+                    obj: blck, prop: 'position',
+                    val: og_pos[i], dims: ['x', 'y', 'z']
+                });
+        }
+        animate(anims, scene);
+
     });
 
     //magnifying glass + click
@@ -213,6 +229,8 @@ var createScene = function () {
         }
     });
 
+
+
     //returns an array of materials to apply to blocks, with different number formats
     function text_labels(format = "std") {
         function labeled_materials(p, i) {
@@ -230,27 +248,27 @@ var createScene = function () {
 
             switch (format) {
                 case ('std'):
-                   //adjust font size based on block ratio
-                   if (h < w/2) {
-                    font_size = Math.round(w/8);
-                   } else{
-                    font_size = Math.round(1.6*w/lbl.length);
-                   }
-                    if(lbl == '1'){font_size = h;}
+                    //adjust font size based on block ratio
+                    if (h < w / 2) {
+                        font_size = Math.round(w / 8);
+                    } else {
+                        font_size = Math.round(1.6 * w / lbl.length);
+                    }
+                    if (lbl == '1') { font_size = h; }
                     dynamicTexture.drawText(lbl, null, null, `${font_size}px Rubik`, "white", clr);
                     exp_on = false;
                     break;
                 case ('exp'):
                     //adjust font size based on block ratio
-                    if (h < w/2) {
-                        font_size = w/8.5;
+                    if (h < w / 2) {
+                        font_size = w / 8.5;
                     } else {
-                        font_size = w*0.7;
+                        font_size = w * 0.7;
                     }
                     //draw exponent
-                    dynamicTexture.drawText(9 - i, w / 2 + font_size *0.4, h / 2 - font_size *0.2, `${Math.round(font_size / 2.5)}px Rubik`, "white", clr);
+                    dynamicTexture.drawText(9 - i, w / 2 + font_size * 0.4, h / 2 - font_size * 0.2, `${Math.round(font_size / 2.5)}px Rubik`, "white", clr);
                     //draw 10
-                    dynamicTexture.drawText('10', w / 2-font_size*0.6, h / 2 +font_size * 0.4, `${font_size}px Rubik`, "white");
+                    dynamicTexture.drawText('10', w / 2 - font_size * 0.6, h / 2 + font_size * 0.4, `${font_size}px Rubik`, "white");
                     exp_on = true;
                     break;
                 case ('blank'):
