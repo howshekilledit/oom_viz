@@ -1,4 +1,7 @@
 <!DOCTYPE html>
+<?php
+include '3D/svg.php'; //link svg reference for control icons
+?>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -34,11 +37,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@500&display=swap" rel="stylesheet">
 <body>
     <div id = "controls">
-        <!--ZOOM IN--><a id = "in" href = "javascript:void(0)"><img src = './3D/magnifying-glass-plus-solid.svg' /></i></a>
-        <!--ZOOM OUT--><a id = "out" href = "javascript:void(0)"><img src = './3D/magnifying-glass-minus-solid.svg' /></a>
+        <!--ZOOM IN--><a id = "in" href = "javascript:void(0)"><?php echo $magmax?></a>
+        <!--ZOOM OUT--><a id = "out" href = "javascript:void(0)"><?php echo $magmin?></a>
         <!--TOGGLE EXPONENT LABELS--><a id = "exp" href = "javascript:void(0)"><em>10<sup>x</sup></em></a>
         <!--FLOAT PIECES APART--><a id = "explode">EXPLODE</a>
     </div>
+
     <canvas id="renderCanvas"></canvas>
     <script src = "./3D/sketch.js"> </script>
 </body>

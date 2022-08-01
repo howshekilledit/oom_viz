@@ -1,4 +1,5 @@
-html, body {
+html,
+body {
   overflow: hidden;
   width: 100%;
   height: 100%;
@@ -15,10 +16,9 @@ html, body {
 #controls {
   position: absolute;
   top: 0;
-  background: white;
+  font-size: 4vh;
   text-align: center;
   width: 100%;
-  font-size: 4vh;
   font-family: "Rubik", sans-serif;
 }
 
@@ -27,14 +27,17 @@ html, body {
   text-align: center;
   text-decoration: none;
 }
-#controls img {
+#controls svg {
   width: 1em;
-  background-image: url('data:image/svg+xml;utf8,<svg ...><g stroke="#fff" ... /></g></svg>');
 }
-
-#out {
-  color: gray;
+#controls #in svg path {
+  fill: blue;
+}
+#controls #out {
   cursor: auto;
+}
+#controls #out svg path {
+  fill: gray;
 }
 
 /*# sourceMappingURL=oom.css.map */
