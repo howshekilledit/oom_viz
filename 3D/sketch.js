@@ -1,6 +1,6 @@
 
 var canvas = document.getElementById("renderCanvas");
-let scale = 1;
+let scale = 2;
 var startRenderLoop = function (engine, canvas) {
     engine.runRenderLoop(function () {
         if (sceneToRender && sceneToRender.activeCamera) {
@@ -23,15 +23,7 @@ var createScene = function () {
     // This targets the camera to scene origin
     camera.setTarget(BABYLON.Vector3.Zero());
 
-    //wait until typeface has loaded to create materials
-    scene.executeWhenReady(function () {
-        //create materials for exponent and text format labels
-        txt_lbls = text_labels();
-        exp_lbls = text_labels('exp');
-        //apply non-exponent labels for now
-        blocks.map((p, i) => p.material = txt_lbls[i]);
-        exp_on = false; //boolean to toggle materials
-    });
+
 
     // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
     var light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(165 * scale, 170 * scale, 210 * scale), scene);
@@ -63,6 +55,15 @@ var createScene = function () {
     //labels to print on text materials
     var mat_labels = ['billion', '100 million', '10 million', 'million', '100,000', '10,000', '1,000', '100', '10', '1']
 
+    //wait until typeface has loaded to create materials
+    scene.executeWhenReady(function () {
+        //create materials for exponent and text format labels
+        txt_lbls = text_labels();
+        exp_lbls = text_labels('exp');
+        //apply non-exponent labels for now
+        blocks.map((p, i) => p.material = txt_lbls[i]);
+        exp_on = false; //boolean to toggle materials
+    });
     //creates a configuration of three blocks, with a total volume of 10^n - 10^(n-3)
     function cornerCutBox(offset = 0, scale = 1) {
 
@@ -129,7 +130,7 @@ var createScene = function () {
 
     //camera positions to animate between
     var cam_c = 110 * scale;
-    var cam_d = 101 * scale;
+    var cam_d = 100.5 * scale;
     var campos = new BABYLON.Vector3(cam_c, cam_c, cam_c);
     var campos2 = new BABYLON.Vector3(cam_d, cam_d, cam_d);
     var campos_og = new BABYLON.Vector3(160 * scale, 165 * scale, 205 * scale);
@@ -226,25 +227,30 @@ var createScene = function () {
             material.diffuseTexture = dynamicTexture;
             var font_size;
             //format as standard or exponents
+
             switch (format) {
                 case ('std'):
-                    if (lbl == '1') {
-                        font_size = 3000;
-                    } else {
-                        if (h < 1000) {
-                            font_size = 350;
-                        } else {
-                            font_size = 550;
-                        }
-
-                    }
+                   //adjust font size based on block ratio
+                   if (h < w/2) {
+                    font_size = Math.round(w/8);
+                   } else{
+                    font_size = Math.round(1.6*w/lbl.length);
+                   }
+                    if(lbl == '1'){font_size = h;}
                     dynamicTexture.drawText(lbl, null, null, `${font_size}px Rubik`, "white", clr);
                     exp_on = false;
                     break;
                 case ('exp'):
-                    font_size = Math.round(h * 0.6);
-                    dynamicTexture.drawText(9 - i, w / 2 + font_size / 2, h / 2 - font_size / 3, `${font_size / 3}px Rubik`, "white", clr);
-                    dynamicTexture.drawText('10', null, null, `${font_size}px Rubik`, "white");
+                    //adjust font size based on block ratio
+                    if (h < w/2) {
+                        font_size = w/8.5;
+                    } else {
+                        font_size = w*0.7;
+                    }
+                    //draw exponent
+                    dynamicTexture.drawText(9 - i, w / 2 + font_size *0.4, h / 2 - font_size *0.2, `${Math.round(font_size / 2.5)}px Rubik`, "white", clr);
+                    //draw 10
+                    dynamicTexture.drawText('10', w / 2-font_size*0.6, h / 2 +font_size * 0.4, `${font_size}px Rubik`, "white");
                     exp_on = true;
                     break;
                 case ('blank'):
@@ -262,8 +268,6 @@ var createScene = function () {
 };
 
 window.initFunction = async function () {
-
-
     var asyncEngineCreation = async function () {
         try {
             return createDefaultEngine();
