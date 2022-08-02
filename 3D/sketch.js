@@ -24,16 +24,29 @@ var createScene = function () {
     camera.setTarget(BABYLON.Vector3.Zero());
 
 
+    //reset pallette
+    colors = [
+        '#004068', // billion
+        '#90618E', //100 mil
+        '#DE6733', //10 mil
+        '#A2184A', //1 mil
+        '#276746', //100k
+        '#534945', //10k
+        '#A16F12', //1k
+        '#31616B', //100
+        '#FF8D4D', //10
+        '#000' //1
+    ]
 
-    // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
-    var light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(165 * scale, 170 * scale, 210 * scale), scene);
-    var light2 = new BABYLON.HemisphericLight("light2", new BABYLON.Vector3(0, 1, 0), scene);
-    var light3 = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(165 * scale, 170 * scale, 210 * scale), scene);
-    //light.diffuse = new BABYLON.Color3.FromHexString(colors[0]);
-    // Default intensity is 1. Let's dim the light a small amount
-    light.intensity = 1;
-    light2.intensity = 0;
-    light3.intensity = 0;
+    let oncolor = '#A2184A';
+    let offcolor = '#534945';  
+
+    //lights
+    var hem_light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(165 * scale, 170 * scale, 210 * scale), scene);
+    var pt_light = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(165 * scale, 170 * scale, 210 * scale), scene);
+   
+    hem_light.intensity = 0.4;
+    pt_light.intensity = 1.3;
 
     scene.clearColor = BABYLON.Color3.White(); //white background
     var blocks; //initalize variable that will hold array of blocks
@@ -64,9 +77,9 @@ var createScene = function () {
         blocks.map((p, i) => p.material = txt_lbls[i]);
         exp_on = false; //boolean to toggle materials
         //zoom slowly on load
-        setTimeout(function(){
-            animate(anim_1, scene, 6);
-        }, 1000);
+        // setTimeout(function(){
+        //     animate(anim_1, scene, 6);
+        // }, 1000);
     });
     //creates a configuration of three blocks, with a total volume of 10^n - 10^(n-3)
     function cornerCutBox(offset = 0, scale = 1) {
@@ -159,6 +172,8 @@ var createScene = function () {
     explode.addEventListener("click", function () {
         var newExplosion = new BABYLON.MeshExploder(blocks);
         newExplosion.explode(0.05);
+        crnch.style.color = oncolor;
+        crnch.style.cursor = "pointer";
     });
 
     crnch.addEventListener('click', function () {
@@ -170,6 +185,8 @@ var createScene = function () {
                     val: og_pos[i], dims: ['x', 'y', 'z']
                 });
         }
+        crnch.style.color = offcolor;
+        crnch.style.cursor = "auto";
         animate(anims, scene);
 
     });
@@ -181,7 +198,7 @@ var createScene = function () {
                 animate(anim_0, scene);
                 pos++;
                 //set colors to indicate active buttons
-                outt.firstElementChild.firstElementChild.style.fill = 'blue';
+                outt.firstElementChild.firstElementChild.style.fill = oncolor;
                 outt.style.cursor = "pointer";
                 break;
             case 1: //zoom from middle position to closest
@@ -189,7 +206,7 @@ var createScene = function () {
                 pos++;
                 //set colors to indicate active buttons
                 this.style.cursor = "auto";
-                this.firstElementChild.firstElementChild.style.fill = 'gray';
+                this.firstElementChild.firstElementChild.style.fill = offcolor;
 
                 break;
             default:
@@ -205,13 +222,13 @@ var createScene = function () {
                 pos--;
                 //set colors to indicate active buttons
                 this.style.cursor = "auto";
-                this.firstElementChild.firstElementChild.style.fill = 'gray';
+                this.firstElementChild.firstElementChild.style.fill = offcolor;
                 break;
             case 2: //zoom out from closest position to middle
                 animate(anim_0, scene);
                 //set colors to indicate active buttons
                 inn.style.cursor = "pointer";
-                inn.firstElementChild.firstElementChild.style.fill = 'blue';
+                inn.firstElementChild.firstElementChild.style.fill = oncolor;
                 pos--;
                 break;
             default:
@@ -224,11 +241,11 @@ var createScene = function () {
     exp.addEventListener("click", function () {
         if (exp_on) {
             blocks.map((p, i) => p.material = txt_lbls[i]);
-            exp.style.color = 'blue';
+            exp.style.color = oncolor;
             exp_on = false;
         } else {
             blocks.map((p, i) => p.material = exp_lbls[i]);
-            exp.style.color = 'black';
+            exp.style.color = offcolor;
             exp_on = true;
         }
     });

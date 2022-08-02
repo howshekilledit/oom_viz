@@ -19,25 +19,37 @@ body {
   font-size: 4vh;
   text-align: center;
   width: 100%;
+  background: white;
   font-family: "Rubik", sans-serif;
 }
 
 #controls a {
-  padding: 10px;
+  padding: 0.2em;
   text-align: center;
   text-decoration: none;
+  color: #A2184A;
+}
+#controls #explode, #controls #return {
+  font-size: 6vh;
 }
 #controls svg {
-  width: 1em;
+  width: 0.8em;
+}
+#controls svg path {
+  fill: white;
 }
 #controls #in svg path {
-  fill: blue;
+  fill: #A2184A;
 }
 #controls #out {
   cursor: auto;
 }
 #controls #out svg path {
-  fill: gray;
+  fill: #534945;
+}
+#controls #return {
+  color: #534945;
+  cursor: auto;
 }
 
 /*# sourceMappingURL=oom.css.map */
